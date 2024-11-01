@@ -9,7 +9,7 @@ pygame.init()
 SCREEN_WIDTH = 768
 SCREEN_HEIGHT = 432
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 bg_images = []
 
@@ -27,6 +27,8 @@ TOP_LIMT = 200
 BOTTOM_LIMT = SCREEN_HEIGHT - 50
 
 LANE_HEIGHT = (BOTTOM_LIMT - TOP_LIMT) // 3
+
+FONT = pygame.font.Font(None, 36)
 
 LANE_Y_POSITIONS = [
     TOP_LIMT,
@@ -73,12 +75,12 @@ class Obstacle(pygame.sprite.Sprite):
 
 def draw_bg(scroll = 0):
     for x in range(50):
-        screen.blit(bg_images[0], ((x * bg_width) - scroll * 1, 0))
-        screen.blit(bg_images[2], ((x * bg_width) - scroll * 2, 0))
-    screen.blit(sun, (SCREEN_WIDTH - sun.get_width(), 0))
+        SCREEN.blit(bg_images[0], ((x * bg_width) - scroll * 1, 0))
+        SCREEN.blit(bg_images[2], ((x * bg_width) - scroll * 2, 0))
+    SCREEN.blit(sun, (SCREEN_WIDTH - sun.get_width(), 0))
     
     for y in LANE_Y_POSITIONS:
-        pygame.draw.line(screen, (255, 0, 0), (0, y), (SCREEN_WIDTH, y), 2) 
+        pygame.draw.line(SCREEN, (255, 0, 0), (0, y), (SCREEN_WIDTH, y), 2) 
 
 
 def main():
@@ -90,6 +92,7 @@ def main():
 
     obstacle_timer = 0
     obstacle_interval = 2000
+    obstacle_passed_count = 0
     obstacles = pygame.sprite.Group()
 
     clock = pygame.time.Clock()
@@ -115,9 +118,17 @@ def main():
         if pygame.sprite.spritecollideany(surfer, obstacles):
             running = False
 
+        for obstacle in obstacles:
+            if obstacle.rect.right < surfer.rect.left:
+                obstacle_passed_count += 1
+                obstacle.kill()
+
         draw_bg(scroll=scroll)
         all_sprites.update()
-        all_sprites.draw(screen)    
+        all_sprites.draw(SCREEN)    
+
+        score_text = FONT.render(f"{obstacle_passed_count // 2}", True, (0, 0, 0))
+        SCREEN.blit(score_text, (10, 10))
         
         pygame.display.flip()
         clock.tick(60)
