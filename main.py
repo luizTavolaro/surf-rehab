@@ -60,13 +60,13 @@ class Surfer(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, lane_y):
+    def __init__(self, y):
         super(Obstacle, self).__init__()
         self.image = pygame.image.load(f"img/sharkfin.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (40, LANE_HEIGHT * 0.8)) 
+        self.image = pygame.transform.scale(self.image, (30, LANE_HEIGHT * 0.6)) 
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH
-        self.rect.y = lane_y
+        self.rect.center = (SCREEN_WIDTH, y)
 
     def update(self):
         self.rect.x -= 7 
@@ -78,17 +78,13 @@ def draw_bg(scroll = 0):
         SCREEN.blit(bg_images[0], ((x * bg_width) - scroll * 1, 0))
         SCREEN.blit(bg_images[2], ((x * bg_width) - scroll * 2, 0))
     SCREEN.blit(sun, (SCREEN_WIDTH - sun.get_width(), 0))
-    
-    for y in LANE_Y_POSITIONS:
-        pygame.draw.line(SCREEN, (255, 0, 0), (0, y), (SCREEN_WIDTH, y), 2) 
-
 
 def main():
     surfer = Surfer("Luiz")
     all_sprites = pygame.sprite.Group()
     all_sprites.add(surfer)
     scroll = 0
-    max_scroll = bg_width * 5 - SCREEN_WIDTH 
+    max_scroll = bg_width * 10 - SCREEN_WIDTH 
 
     obstacle_timer = 0
     obstacle_interval = 2000
@@ -111,7 +107,7 @@ def main():
 
             lanes = random.sample(LANE_Y_POSITIONS[:-1], 2)
             for lane_y in lanes:
-                obstacle = Obstacle(lane_y)
+                obstacle = Obstacle(lane_y + LANE_HEIGHT // 2)
                 obstacles.add(obstacle)
                 all_sprites.add(obstacle)
 
