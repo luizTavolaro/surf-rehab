@@ -128,7 +128,7 @@ class Surfer(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, lane_y, w, h):
+    def __init__(self, lane_y, w, h, speed):
         super().__init__()
         self.images = [
             pygame.image.load(f"img/seagul1.png").convert_alpha(),
@@ -139,13 +139,14 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH
         self.rect.y = lane_y
+        self.speed = 7 * speed
         
         self.animation_index = 0
         self.animation_timer = 0
         self.animation_interval = 2000  
 
     def update(self):
-        self.rect.x -= 7
+        self.rect.x -= self.speed
         if self.rect.right < 0:
             self.kill()
 
@@ -217,7 +218,7 @@ def main():
             obstacle_timer = 0
             lanes = random.sample(LANE_Y_POSITIONS[:-1], 2)
             for lane_y in lanes:
-                obstacle = Obstacle(lane_y + LANE_HEIGHT // 2, obstacle_w, obstacle_h)
+                obstacle = Obstacle(lane_y + LANE_HEIGHT // 2, obstacle_w, obstacle_h, speed=2 if level == 3 else 1)
                 obstacles.add(obstacle)
                 all_sprites.add(obstacle)
 
