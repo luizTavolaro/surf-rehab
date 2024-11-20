@@ -6,7 +6,7 @@ import random
 
 pygame.init()
 
-SCREEN_WIDTH = 768
+SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 432
 
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -14,17 +14,23 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 bg_images = []
 
 clouds = pygame.image.load(f"img/clouds.png").convert_alpha()
+clouds = pygame.transform.scale(clouds, (SCREEN_WIDTH, SCREEN_HEIGHT))
 sun = pygame.image.load(f"img/sun.png").convert_alpha()
+sun = pygame.transform.scale(sun, (SCREEN_WIDTH, SCREEN_HEIGHT))
 sea = pygame.image.load(f"img/sea.png").convert_alpha()
+sea = pygame.transform.scale(sea, (SCREEN_WIDTH, SCREEN_HEIGHT))
+background = pygame.image.load(f"img/background.png").convert_alpha()
+background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 bg_images.append(clouds)
 bg_images.append(sun)
 bg_images.append(sea)
+bg_images.append(background)
 
 bg_width = bg_images[0].get_width()
 
-TOP_LIMT = 200
-BOTTOM_LIMT = SCREEN_HEIGHT - 50
+TOP_LIMT = 170
+BOTTOM_LIMT = SCREEN_HEIGHT - 80
 
 LANE_HEIGHT = (BOTTOM_LIMT - TOP_LIMT) // 3
 
@@ -45,7 +51,7 @@ class Surfer(pygame.sprite.Sprite):
         self.position = pygame.math.Vector2(100, SCREEN_HEIGHT // 2)
         self.speed = 5
         self.image = pygame.image.load(f"img/surfer.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70,LANE_HEIGHT))
+        self.image = pygame.transform.scale(self.image, (70, LANE_HEIGHT + 10))
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
@@ -60,24 +66,40 @@ class Surfer(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, y):
-        super(Obstacle, self).__init__()
-        self.image = pygame.image.load(f"img/sharkfin.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (30, LANE_HEIGHT * 0.6)) 
+    def __init__(self, lane_y):
+        super().__init__()
+        self.images = [
+            pygame.image.load(f"img/seagul1.png").convert_alpha(),
+            pygame.image.load(f"img/seagul2.png").convert_alpha()
+        ]
+        self.images = [pygame.transform.scale(img, (30, int(LANE_HEIGHT * 0.6))) for img in self.images]
+        self.image = self.images[0]
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH
-        self.rect.center = (SCREEN_WIDTH, y)
+        self.rect.y = lane_y
+        
+        self.animation_index = 0
+        self.animation_timer = 0
+        self.animation_interval = 2000  
 
     def update(self):
-        self.rect.x -= 7 
+        self.rect.x -= 7
         if self.rect.right < 0:
-            self.kill()  
+            self.kill()
+
+        self.animation_timer += 100
+        if self.animation_timer >= self.animation_interval:
+            self.animation_timer = 0
+            self.animation_index = (self.animation_index + 1) % len(self.images)
+            self.image = self.images[self.animation_index]
 
 def draw_bg(scroll = 0):
-    for x in range(50):
-        SCREEN.blit(bg_images[0], ((x * bg_width) - scroll * 1, 0))
-        SCREEN.blit(bg_images[2], ((x * bg_width) - scroll * 2, 0))
+    SCREEN.blit(background, (0, 0))
     SCREEN.blit(sun, (SCREEN_WIDTH - sun.get_width(), 0))
+    for x in range(50):
+        SCREEN.blit(clouds, ((x * bg_width) - scroll * 1, 0))
+        SCREEN.blit(sea, ((x * bg_width) - scroll * 2, 0))
+
 
 def main():
     surfer = Surfer("Luiz")
@@ -99,6 +121,8 @@ def main():
             if event.type == QUIT:
                 running = False
         
+        if scroll == max_scroll:
+            max_scroll += 100
         scroll = min(scroll + 2, max_scroll)
 
         obstacle_timer += clock.get_time()
