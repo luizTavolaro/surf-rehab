@@ -160,27 +160,22 @@ def draw_bg(level=1, scroll=0, speed=1):
         sun_img = sun
         background_img = background
         clouds_img = clouds
-        scroll = 100
-        speed = 1
-        
     elif level == 2:
         sun_img = sun2
         background_img = background2
         clouds_img = clouds2
-        scroll = 200
-        speed = 2
-
     elif level == 3:
         sun_img = sun3
         background_img = background3
         clouds_img = clouds3
-        scroll = 300
-        speed = 3
 
+    # Ajuste do movimento do fundo
     SCREEN.blit(background_img, (0, 0))
     SCREEN.blit(sun_img, (SCREEN_WIDTH - sun_img.get_width(), 0))
+    
+    # Desenhando as nuvens e o mar com movimento
     for x in range(50):
-        SCREEN.blit(clouds_img, ((x * bg_width) - scroll * 1 * speed, 0))
+        SCREEN.blit(clouds_img, ((x * bg_width) - scroll * speed, 0))
         SCREEN.blit(sea, ((x * bg_width) - scroll * 2 * speed, 0))
 
 
@@ -211,40 +206,46 @@ def main():
                 if event.key == K_ESCAPE:  # ESC para pausar
                     pause_screen()
         
+        # Atualizando o movimento do fundo com base na velocidade
         if scroll == max_scroll:
             max_scroll += 100
         scroll = min(scroll + 2, max_scroll)
 
+        # Atualiza obstáculos
         obstacle_timer += clock.get_time()
         if obstacle_timer >= obstacle_interval:
             obstacle_timer = 0
-
             lanes = random.sample(LANE_Y_POSITIONS[:-1], 2)
             for lane_y in lanes:
                 obstacle = Obstacle(lane_y + LANE_HEIGHT // 2, obstacle_w, obstacle_h)
                 obstacles.add(obstacle)
                 all_sprites.add(obstacle)
 
+        # Verificando colisões com obstáculos
         if pygame.sprite.spritecollideany(surfer, obstacles):
             running = False
 
+        # Removendo obstáculos que passaram
         for obstacle in obstacles:
             if obstacle.rect.right < surfer.rect.left:
                 obstacle_passed_count += 1
                 obstacle.kill()
 
-        draw_bg(level=level, scroll=scroll)
+        # Atualizando e desenhando o fundo
+        draw_bg(level=level, scroll=scroll, speed=(level))  # Passando o nível para controlar a velocidade
+
+        # Atualiza e desenha todos os sprites
         all_sprites.update()
         all_sprites.draw(SCREEN) 
 
-
-        score_color = (0,0,0)
+        # Exibindo pontuação e nível
+        score_color = (0, 0, 0)
         if obstacle_passed_count // 2 >= 3:
             level = 3
         elif obstacle_passed_count // 2 >= 2: 
             level = 2
         if level == 3:
-            score_color = (255,255,255)
+            score_color = (255, 255, 255)
 
         level_text = FONT.render(f"Nível: {level}", True, score_color)
         score_text = FONT.render(f"{obstacle_passed_count // 2}", True, score_color)
@@ -253,7 +254,7 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
-  
+
     pygame.quit()
 
 if __name__ == "__main__":
