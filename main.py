@@ -8,7 +8,7 @@ SCREEN_WIDTH = 768
 SCREEN_HEIGHT = 432
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-sea = pygame.image.load(f"img/sea1.png").convert_alpha()
+sea = pygame.image.load(f"img/sea.png").convert_alpha()
 sea = pygame.transform.scale(sea, (SCREEN_WIDTH, SCREEN_HEIGHT))
 sea2 = pygame.image.load(f"img/sea2.png").convert_alpha()
 sea2 = pygame.transform.scale(sea2, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -86,9 +86,9 @@ class Surfer(pygame.sprite.Sprite):
 
 class Obstacle(pygame.sprite.Sprite):
     OBSTACLE_TYPES = {
-        "seagul": ["seagul1.png", "seagul2.png"],
-        "octopus": ["octopus1.png", "octopus2.png"],
-        "sharkfin": ["sharkfin1.png", "sharkfin2.png"]
+        "seagul": ["seagul.png", "seagul2.png"],
+        "octopus": ["octopus.png", "octopus2.png"],
+        "sharkfin": ["sharkfin.png", "sharkfin2.png"]
     }
 
     def __init__(self, lane_y, w, h, speed, obstacle_type):
