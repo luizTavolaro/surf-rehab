@@ -250,7 +250,6 @@ def main():
 
     level = 1
     scroll = 0
-    max_scroll = bg_width * 10 - SCREEN_WIDTH 
 
     obstacle_timer = 0
     obstacle_interval = 2000
@@ -270,9 +269,7 @@ def main():
                 if event.key == K_ESCAPE: 
                     pause_screen()
 
-        if scroll == max_scroll:
-            max_scroll += 100
-        scroll = min(scroll + 2, max_scroll)
+        scroll = scroll + 2
 
         obstacle_timer += clock.get_time()
         if obstacle_timer >= obstacle_interval:
