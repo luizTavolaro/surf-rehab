@@ -236,7 +236,7 @@ def draw_bg(level=1, scroll=0):
     sea2_img = seas[1]
     cur_sea_img = sea_img 
     
-    for x in range(50):
+    for x in range(500):
         SCREEN.blit(cloud_img, ((x * bg_width) - scroll * speed, 0))
         SCREEN.blit(cur_sea_img, ((x * bg_width) - scroll * 2 * speed, 0))
         if(cur_sea_img == sea_img):
