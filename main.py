@@ -84,9 +84,9 @@ class Surfer(pygame.sprite.Sprite):
         if level == 1:
             self.speed = 5
         elif level == 2:
-            self.speed = 7
+            self.speed = 5
         elif level == 3:
-            self.speed = 9
+            self.speed = 7
 
 class Obstacle(pygame.sprite.Sprite):
     OBSTACLE_TYPES = {
@@ -108,7 +108,7 @@ class Obstacle(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH
         self.rect.y = lane_y
-        self.speed = 7 * speed
+        self.speed = 6 * speed
         
         self.animation_index = 0
         self.animation_timer = 0
@@ -212,19 +212,22 @@ def character_selection():
 
         pygame.display.flip()
 
-def draw_bg(level=1, scroll=0, speed=1):
+def draw_bg(level=1, scroll=0):
     if level == 1:
         sun_img = suns[0]
         background_img = backgrounds[0]
         cloud_img = clouds[0]
+        speed = 1
     elif level == 2:
         sun_img = suns[1]
         background_img = backgrounds[1]
         cloud_img = clouds[1]
+        speed = 2
     elif level == 3:
         sun_img = suns[2]
         background_img = backgrounds[2]
         cloud_img = clouds[2]
+        speed = 2
 
     SCREEN.blit(background_img, (0, 0))
     SCREEN.blit(sun_img, (SCREEN_WIDTH - sun_img.get_width(), 0))
@@ -289,7 +292,7 @@ def main():
                 obstacle_passed_count += 1
                 obstacle.kill()
 
-        draw_bg(level=level, scroll=scroll, speed=(level)) 
+        draw_bg(level=level, scroll=scroll) 
 
         all_sprites.update()
         all_sprites.draw(SCREEN) 
