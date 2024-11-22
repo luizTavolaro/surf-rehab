@@ -53,66 +53,17 @@ LANE_Y_POSITIONS = [
     BOTTOM_LIMT
 ]
 
-# Cores
 WHITE = (255, 255, 255)
 BLUE = (50, 150, 255)
 
-def draw_text(text, font, color, surface, x, y):
-    text_obj = font.render(text, True, color)
-    text_rect = text_obj.get_rect(center=(x, y))
-    surface.blit(text_obj, text_rect)
-
-def start_screen():
-    running = True
-    while running:
-        SCREEN.fill(BLUE)
-        draw_text("Surf Game", BIG_FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4)
-        draw_text("Pressione ENTER para Iniciar", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        draw_text("Pressione ESC para Sair", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40)
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-            if event.type == KEYDOWN:
-                if event.key == K_RETURN:  # ENTER para iniciar
-                    running = False
-                elif event.key == K_ESCAPE:  # ESC para sair
-                    pygame.quit()
-                    exit()
-
-        pygame.display.flip()
-
-def pause_screen():
-    paused = True
-    while paused:
-        SCREEN.fill((0, 0, 0))  # Fundo preto
-        draw_text("Jogo Pausado", BIG_FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-        draw_text("Pressione ENTER para Continuar", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-        draw_text("Pressione ESC para Sair", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40)
-
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                exit()
-            if event.type == KEYDOWN:
-                if event.key == K_RETURN:  # ENTER para continuar
-                    paused = False
-                elif event.key == K_ESCAPE:  # ESC para sair
-                    pygame.quit()
-                    exit()
-
-        pygame.display.flip()
-
-
 class Surfer(pygame.sprite.Sprite):
-    def __init__(self, name):
+    def __init__(self, name, image_path):
         super(Surfer, self).__init__()
         self.name = name
         self.alive = True
         self.position = pygame.math.Vector2(100, SCREEN_HEIGHT // 2)
         self.speed = 5
-        self.image = pygame.image.load(f"img/surfer.png").convert_alpha()
+        self.image = pygame.image.load(f"img/{image_path}").convert_alpha()
         self.image = pygame.transform.scale(self.image, (70, LANE_HEIGHT + 10))
         self.rect = self.image.get_rect()
         self.rect.center = self.position
@@ -156,6 +107,93 @@ class Obstacle(pygame.sprite.Sprite):
             self.animation_index = (self.animation_index + 1) % len(self.images)
             self.image = self.images[self.animation_index]
 
+def draw_text(text, font, color, surface, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect(center=(x, y))
+    surface.blit(text_obj, text_rect)
+
+def start_screen():
+    running = True
+    while running:
+        SCREEN.fill(BLUE)
+        draw_text("Surf Game", BIG_FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4)
+        draw_text("Pressione ENTER para Iniciar", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        draw_text("Pressione ESC para Sair", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == KEYDOWN:
+                if event.key == K_RETURN:  
+                    running = False
+                elif event.key == K_ESCAPE: 
+                    pygame.quit()
+                    exit()
+
+        pygame.display.flip()
+
+def pause_screen():
+    paused = True
+    while paused:
+        SCREEN.fill((0, 0, 0)) 
+        draw_text("Jogo Pausado", BIG_FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
+        draw_text("Pressione ENTER para Continuar", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+        draw_text("Pressione ESC para Sair", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 40)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == KEYDOWN:
+                if event.key == K_RETURN:  
+                    paused = False
+                elif event.key == K_ESCAPE:  
+                    pygame.quit()
+                    exit()
+
+        pygame.display.flip()
+
+def character_selection():
+    characters = [
+        pygame.image.load("img/surfer.png").convert_alpha(),
+        pygame.image.load("img/surfer2.png").convert_alpha(),
+        pygame.image.load("img/surfer3.png").convert_alpha(),
+    ]
+    character_names = ["surfer.png", "surfer2.png", "surfer3.png"]
+    character_rects = []
+    selected_index = 0
+
+    for i in range(len(characters)):
+        characters[i] = pygame.transform.scale(characters[i], (100, 150))
+        character_rects.append(characters[i].get_rect(center=(SCREEN_WIDTH // 2 - 150 + i * 150, SCREEN_HEIGHT // 2)))
+
+    running = True
+    while running:
+        SCREEN.fill(BLUE)
+        draw_text("Selecione seu personagem", BIG_FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, 50)
+
+        for i, char in enumerate(characters):
+            SCREEN.blit(char, character_rects[i])
+            if i == selected_index:
+                pygame.draw.rect(SCREEN, WHITE, character_rects[i], 3)
+
+        draw_text("Use as setas para mudar, ENTER para confirmar", FONT, WHITE, SCREEN, SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                exit()
+            if event.type == KEYDOWN:
+                if event.key == K_LEFT:
+                    selected_index = (selected_index - 1) % len(characters)
+                elif event.key == K_RIGHT:
+                    selected_index = (selected_index + 1) % len(characters)
+                elif event.key == K_RETURN:
+                    return character_names[selected_index]
+
+        pygame.display.flip()
+
 def draw_bg(level=1, scroll=0, speed=1):
     if level == 1:
         sun_img = sun
@@ -170,20 +208,18 @@ def draw_bg(level=1, scroll=0, speed=1):
         background_img = background3
         clouds_img = clouds3
 
-    # Ajuste do movimento do fundo
     SCREEN.blit(background_img, (0, 0))
     SCREEN.blit(sun_img, (SCREEN_WIDTH - sun_img.get_width(), 0))
     
-    # Desenhando as nuvens e o mar com movimento
     for x in range(50):
         SCREEN.blit(clouds_img, ((x * bg_width) - scroll * speed, 0))
         SCREEN.blit(sea, ((x * bg_width) - scroll * 2 * speed, 0))
 
-
 def main():
     start_screen()
+    selected_character = character_selection()
+    surfer = Surfer("Player", selected_character)
     level = 1
-    surfer = Surfer("Luiz")
     all_sprites = pygame.sprite.Group()
     all_sprites.add(surfer)
     scroll = 0
@@ -204,15 +240,13 @@ def main():
             if event.type == QUIT:
                 running = False
             if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:  # ESC para pausar
+                if event.key == K_ESCAPE: 
                     pause_screen()
-        
-        # Atualizando o movimento do fundo com base na velocidade
+
         if scroll == max_scroll:
             max_scroll += 100
         scroll = min(scroll + 2, max_scroll)
 
-        # Atualiza obstáculos
         obstacle_timer += clock.get_time()
         if obstacle_timer >= obstacle_interval:
             obstacle_timer = 0
@@ -222,24 +256,19 @@ def main():
                 obstacles.add(obstacle)
                 all_sprites.add(obstacle)
 
-        # Verificando colisões com obstáculos
         if pygame.sprite.spritecollideany(surfer, obstacles):
             running = False
 
-        # Removendo obstáculos que passaram
         for obstacle in obstacles:
             if obstacle.rect.right < surfer.rect.left:
                 obstacle_passed_count += 1
                 obstacle.kill()
 
-        # Atualizando e desenhando o fundo
-        draw_bg(level=level, scroll=scroll, speed=(level))  # Passando o nível para controlar a velocidade
+        draw_bg(level=level, scroll=scroll, speed=(level)) 
 
-        # Atualiza e desenha todos os sprites
         all_sprites.update()
         all_sprites.draw(SCREEN) 
 
-        # Exibindo pontuação e nível
         score_color = (0, 0, 0)
         if obstacle_passed_count // 2 >= 3:
             level = 3
