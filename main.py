@@ -66,7 +66,7 @@ class Surfer(pygame.sprite.Sprite):
         self.position = pygame.math.Vector2(100, SCREEN_HEIGHT // 2)
         self.speed = 5
         self.image = pygame.image.load(f"img/{image_path}").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (70, LANE_HEIGHT + 10))
+        self.image = pygame.transform.scale(self.image, (60, LANE_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.center = self.position
 
@@ -235,6 +235,7 @@ def draw_bg(level=1, scroll=0):
     sea_img = seas[0]
     sea2_img = seas[1]
     cur_sea_img = sea_img 
+    
     for x in range(50):
         SCREEN.blit(cloud_img, ((x * bg_width) - scroll * speed, 0))
         SCREEN.blit(cur_sea_img, ((x * bg_width) - scroll * 2 * speed, 0))
@@ -291,20 +292,22 @@ def main():
             if obstacle.rect.right < surfer.rect.left:
                 obstacle_passed_count += 1
                 obstacle.kill()
+        
+        score_color = (0, 0, 0)
+
+        if obstacle_passed_count // 2 >= 20:
+            level = 3
+        elif obstacle_passed_count // 2 >= 10: 
+            level = 2
+        if level == 3:
+            score_color = (255, 255, 255)
+
+        surfer.update_speed(level)
 
         draw_bg(level=level, scroll=scroll) 
 
         all_sprites.update()
         all_sprites.draw(SCREEN) 
-
-        score_color = (0, 0, 0)
-        if obstacle_passed_count // 2 >= 3:
-            level = 3
-        elif obstacle_passed_count // 2 >= 2: 
-            level = 2
-        if level == 3:
-            score_color = (255, 255, 255)
-        surfer.update_speed(level)
 
         level_text = FONT.render(f"Nível: {level}", True, score_color)
         score_text = FONT.render(f"{obstacle_passed_count // 2}", True, score_color)
