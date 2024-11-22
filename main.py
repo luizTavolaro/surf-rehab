@@ -12,6 +12,7 @@ sea = pygame.image.load(f"img/sea.png").convert_alpha()
 sea = pygame.transform.scale(sea, (SCREEN_WIDTH, SCREEN_HEIGHT))
 sea2 = pygame.image.load(f"img/sea2.png").convert_alpha()
 sea2 = pygame.transform.scale(sea2, (SCREEN_WIDTH, SCREEN_HEIGHT))
+seas = [sea, sea2]
 
 sun = pygame.image.load(f"img/sun.png").convert_alpha()
 sun = pygame.transform.scale(sun, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -19,6 +20,7 @@ sun2 = pygame.image.load(f"img/sun2.png").convert_alpha()
 sun2 = pygame.transform.scale(sun2, (SCREEN_WIDTH, SCREEN_HEIGHT))
 sun3 = pygame.image.load(f"img/sun3.png").convert_alpha()
 sun3 = pygame.transform.scale(sun3, (SCREEN_WIDTH, SCREEN_HEIGHT))
+suns = [sun, sun2, sun3]
 
 background = pygame.image.load(f"img/background.png").convert_alpha()
 background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -26,13 +28,15 @@ background2 = pygame.image.load(f"img/background2.png").convert_alpha()
 background2 = pygame.transform.scale(background2, (SCREEN_WIDTH, SCREEN_HEIGHT))
 background3 = pygame.image.load(f"img/background3.png").convert_alpha()
 background3 = pygame.transform.scale(background3, (SCREEN_WIDTH, SCREEN_HEIGHT))
+backgrounds = [background, background2, background3]
 
-clouds = pygame.image.load(f"img/clouds.png").convert_alpha()
-clouds = pygame.transform.scale(clouds, (SCREEN_WIDTH, SCREEN_HEIGHT))
-clouds2 = pygame.image.load(f"img/clouds2.png").convert_alpha()
-clouds2 = pygame.transform.scale(clouds2, (SCREEN_WIDTH, SCREEN_HEIGHT))
-clouds3 = pygame.image.load(f"img/clouds3.png").convert_alpha()
-clouds3 = pygame.transform.scale(clouds3, (SCREEN_WIDTH, SCREEN_HEIGHT))
+cloud = pygame.image.load(f"img/clouds.png").convert_alpha()
+cloud = pygame.transform.scale(cloud, (SCREEN_WIDTH, SCREEN_HEIGHT))
+cloud2 = pygame.image.load(f"img/clouds2.png").convert_alpha()
+cloud2 = pygame.transform.scale(cloud2, (SCREEN_WIDTH, SCREEN_HEIGHT))
+cloud3 = pygame.image.load(f"img/clouds3.png").convert_alpha()
+cloud3 = pygame.transform.scale(cloud3, (SCREEN_WIDTH, SCREEN_HEIGHT))
+clouds = [cloud, cloud2, cloud3]
 
 bg_width = background.get_width()
 
@@ -210,26 +214,26 @@ def character_selection():
 
 def draw_bg(level=1, scroll=0, speed=1):
     if level == 1:
-        sun_img = sun
-        background_img = background
-        clouds_img = clouds
+        sun_img = suns[0]
+        background_img = backgrounds[0]
+        cloud_img = clouds[0]
     elif level == 2:
-        sun_img = sun2
-        background_img = background2
-        clouds_img = clouds2
+        sun_img = suns[1]
+        background_img = backgrounds[1]
+        cloud_img = clouds[1]
     elif level == 3:
-        sun_img = sun3
-        background_img = background3
-        clouds_img = clouds3
+        sun_img = suns[2]
+        background_img = backgrounds[2]
+        cloud_img = clouds[2]
 
     SCREEN.blit(background_img, (0, 0))
     SCREEN.blit(sun_img, (SCREEN_WIDTH - sun_img.get_width(), 0))
     
-    sea_img = sea
-    sea2_img = sea2
+    sea_img = seas[0]
+    sea2_img = seas[1]
     cur_sea_img = sea_img 
     for x in range(50):
-        SCREEN.blit(clouds_img, ((x * bg_width) - scroll * speed, 0))
+        SCREEN.blit(cloud_img, ((x * bg_width) - scroll * speed, 0))
         SCREEN.blit(cur_sea_img, ((x * bg_width) - scroll * 2 * speed, 0))
         if(cur_sea_img == sea_img):
             cur_sea_img = sea2_img
