@@ -78,6 +78,14 @@ class Surfer(pygame.sprite.Sprite):
 
         self.rect.center = self.position
 
+    def update_speed(self, level):
+        if level == 1:
+            self.speed = 5
+        elif level == 2:
+            self.speed = 7
+        elif level == 3:
+            self.speed = 9
+
 class Obstacle(pygame.sprite.Sprite):
     OBSTACLE_TYPES = {
         "seagul": ["seagul1.png", "seagul2.png"],
@@ -227,9 +235,11 @@ def main():
     start_screen()
     selected_character = character_selection()
     surfer = Surfer("Player", selected_character)
-    level = 1
+
     all_sprites = pygame.sprite.Group()
     all_sprites.add(surfer)
+
+    level = 1
     scroll = 0
     max_scroll = bg_width * 10 - SCREEN_WIDTH 
 
@@ -285,6 +295,7 @@ def main():
             level = 2
         if level == 3:
             score_color = (255, 255, 255)
+        surfer.update_speed(level)
 
         level_text = FONT.render(f"Nível: {level}", True, score_color)
         score_text = FONT.render(f"{obstacle_passed_count // 2}", True, score_color)
