@@ -79,11 +79,19 @@ class Surfer(pygame.sprite.Sprite):
         self.rect.center = self.position
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, lane_y, w, h, speed):
+    OBSTACLE_TYPES = {
+        "seagul": ["seagul1.png", "seagul2.png"],
+        "octopus": ["octopus1.png", "octopus2.png"],
+        "sharkfin": ["sharkfin1.png", "sharkfin2.png"]
+    }
+
+    def __init__(self, lane_y, w, h, speed, obstacle_type):
         super().__init__()
+        if obstacle_type not in self.OBSTACLE_TYPES:
+            raise ValueError(f"Tipo de obstáculo inválido: {obstacle_type}")
+
         self.images = [
-            pygame.image.load(f"img/seagul1.png").convert_alpha(),
-            pygame.image.load(f"img/seagul2.png").convert_alpha()
+            pygame.image.load(f"img/{img}").convert_alpha() for img in self.OBSTACLE_TYPES[obstacle_type]
         ]
         self.images = [pygame.transform.scale(img, (w, int(h))) for img in self.images]
         self.image = self.images[0]
@@ -94,7 +102,7 @@ class Obstacle(pygame.sprite.Sprite):
         
         self.animation_index = 0
         self.animation_timer = 0
-        self.animation_interval = 2000  
+        self.animation_interval = 2000
 
     def update(self):
         self.rect.x -= self.speed
@@ -251,8 +259,9 @@ def main():
         if obstacle_timer >= obstacle_interval:
             obstacle_timer = 0
             lanes = random.sample(LANE_Y_POSITIONS[:-1], 2)
+            obstacle_type = "seagul" if level == 1 else "octopus" if level == 2 else "sharkfin"
             for lane_y in lanes:
-                obstacle = Obstacle(lane_y + LANE_HEIGHT // 2, obstacle_w, obstacle_h, speed=2 if level == 3 else 1)
+                obstacle = Obstacle(lane_y + LANE_HEIGHT // 2, obstacle_w, obstacle_h, speed=2 if level == 3 else 1, obstacle_type=obstacle_type)
                 obstacles.add(obstacle)
                 all_sprites.add(obstacle)
 
